@@ -1,0 +1,7 @@
+nsf:
+  sbi_address: "127.0.0.1"
+  sbi_port: 8000
+  db_type: "mongodb"
+
+logger:
+  level: "info"

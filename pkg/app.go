@@ -30,10 +30,13 @@ func NewApp(configFilePath string) (*App, error) {
 	server := sbi.NewServer(&sbi.ServerIE{
 		SbiAddress: fmt.Sprintf("%s:%d", config.Nsf.SbiAddress, config.Nsf.SbiPort),
 
-		DbType:    config.Nsf.DbType,
+		DbType: config.Nsf.DbType,
 
-		NsfLogger:  &logger,
+		NsfLogger: &logger,
 	})
+	if server.NsfContext == nil {
+		return nil, fmt.Errorf("failed to initialize NSF database")
+	}
 
 	return &App{
 		NsfConfig: &config,

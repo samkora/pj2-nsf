@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"nsf/internal/db"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -46,6 +47,7 @@ var dbInstance db.DbIf
 
 func TestDb(t *testing.T) {
 	t.Run("Bbolt DB", testBboltDb)
+	t.Run("MongoDB", testCustomDb)
 }
 
 func testBboltDb(t *testing.T) {
@@ -65,8 +67,14 @@ func testBboltDb(t *testing.T) {
 }
 
 func testCustomDb(t *testing.T) {
+	if os.Getenv("NSF_TEST_MONGODB") != "1" {
+		t.Skip("set NSF_TEST_MONGODB=1 to run against an isolated MongoDB database")
+	}
+	if !strings.HasPrefix(os.Getenv("NSF_MONGODB_DATABASE"), "nsf_project2_test_") {
+		t.Fatal("MongoDB tests require NSF_MONGODB_DATABASE=nsf_project2_test_<unique name>")
+	}
 	var err error
-	dbInstance, err = db.NewDb("custom") // TODO: change "custom" to the actual name of your custom DB implementation
+	dbInstance, err = db.NewDb("mongodb")
 	if err != nil {
 		t.Fatalf("Failed to create DB instance: %v", err)
 	}
